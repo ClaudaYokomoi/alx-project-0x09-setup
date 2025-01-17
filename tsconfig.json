@@ -16,7 +16,13 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve", // Change this to 'react-jsx' to support JSX in .ts files
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "*"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -26,13 +32,4 @@
   "exclude": [
     "node_modules"
   ]
-  {
-    "compilerOptions": {
-      "baseUrl": ".",
-      "paths": {
-        "@/*": ["*"]
-      }
-    }
-  }
-  
 }

@@ -1,31 +1,38 @@
-export const API_URL = 'https://api.example.com/properties'
-export const APP_NAME = 'ALX Listing App'
-export const HERO_BACKGROUND_IMAGE = '/images/hero-background.jpg';
+import { PROPERTYLISTINGSAMPLE } from "@/constants/index";
+import { useRouter } from "next/router";
+import PropertyDetail from "@/components/property/PropertyDetail";
+import BookingSection from "@/components/property/BookingSection";
+import ReviewSection from "@/components/property/ReviewSection";
 
-export const PROPERTYLISTINGSAMPLE = [
-    {
-      id: 1,
-      image: '/images/luxury-apartment.jpg', 
-      name: 'Luxury Apartment',
-      price: 150,
-      rating: 4.8,
-      address: { city: 'New York', country: 'USA' },
-    },
-    {
-      id: 2,
-      image: '/images/beachfront-villa.jpg', 
-      name: 'Beachfront Villa',
-      price: 200,
-      rating: 4.9,
-      address: { city: 'Malibu', country: 'USA' },
-    },
-    {
-      id: 3,
-      image: '/images/cozy-cottage.jpg', 
-      name: 'Cozy Cottage',
-      price: 100,
-      rating: 4.7,
-      address: { city: 'Austin', country: 'USA' },
-    },
-  ];
-  
+export default function PropertyPage() {
+  const router = useRouter();
+  const { id } = router.query;
+
+  // Ensure the id is available
+  if (!id) return "Loading...";  // Return a plain string message instead of JSX
+
+  // Ensure the id is parsed to an integer and matches a property
+  const property = PROPERTYLISTINGSAMPLE.find((item) => item.id === parseInt(id as string));
+
+  // Handle the case where no property is found for the given ID
+  if (!property) return "Property not found";  // Return a plain string message instead of JSX
+
+  return (
+    <div className="container mx-auto p-6">
+      {/* Property Detail */}
+      <PropertyDetail property={property} />
+
+      <div className="flex flex-col md:flex-row gap-6 mt-6">
+        {/* Review Section */}
+        <div className="flex-1">
+          <ReviewSection reviews={property.reviews || []} />
+        </div>
+
+        {/* Booking Section */}
+        <div className="w-full md:w-1/3">
+          <BookingSection price={property.price} />
+        </div>
+      </div>
+    </div>
+  );
+}
