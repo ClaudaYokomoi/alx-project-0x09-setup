@@ -11,17 +11,48 @@ const Home: React.FC = () => {
   const handleGenerateImage = async () => {
     setIsLoading(true);  // Start loading
     console.log("Generating Images");
+    
+    // Ensure that the API key is available in your .env.local file
+    const apiKey = process.env.NEXT_PUBLIC_GPT_API_KEY;
 
-    // Simulate API call to generate an image (replace this with real API logic)
-    setTimeout(() => {
-      const newImageUrl = `https://via.placeholder.com/400?text=Image+for+${prompt}`;
-      setImageUrl(newImageUrl);  // Set the generated image URL
-      setGeneratedImages((prevImages) => [
-        ...prevImages,
-        { imageUrl: newImageUrl, prompt }
-      ]);
+    if (!apiKey) {
+      console.error("API key is missing!");
+      setIsLoading(false);
+      return;
+    }
+
+    // Make the actual API request (replace with your real GPT-4 image generation endpoint)
+    try {
+      const response = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          n: 1, // Number of images to generate
+          size: "1024x1024", // Size of the generated image
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok && data?.data?.length > 0) {
+        const newImageUrl = data.data[0].url; // Assuming the API response has a `url` field for the generated image
+        setImageUrl(newImageUrl);  // Set the generated image URL
+        setGeneratedImages((prevImages) => [
+          ...prevImages,
+          { imageUrl: newImageUrl, prompt }
+        ]);
+      } else {
+        console.error("Failed to generate image", data);
+      }
+    } catch (error) {
+      console.error("Error generating image:", error);
+    } finally {
       setIsLoading(false);  // End loading
-    }, 2000);
+    }
   };
 
   return (
